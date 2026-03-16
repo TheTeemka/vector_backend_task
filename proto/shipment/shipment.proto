@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package shipment;
+
+option go_package = "shipment-service/gen/proto/shipment;shipment";
+
+import "google/protobuf/timestamp.proto";
+
+enum ShipmentStatus {
+  SHIPMENT_STATUS_UNSPECIFIED = 0;
+  SHIPMENT_STATUS_PENDING     = 1;
+  SHIPMENT_STATUS_IN_TRANSIT  = 2;
+  SHIPMENT_STATUS_DELIVERED   = 3;
+  SHIPMENT_STATUS_CANCELLED   = 99;
+}
+
+message DriverInfo {
+  string driver_id = 1;
+  string unit_id   = 2;
+}
+
+message StatusEvent {
+  ShipmentStatus            status      = 1;
+  string                    note        = 2;
+  google.protobuf.Timestamp occurred_at = 3;
+}
+
+message Shipment {
+  string                    id               = 1;
+  string                    reference_number = 2;
+  string                    origin           = 3;
+  string                    destination      = 4;
+  ShipmentStatus            current_status   = 5;
+  DriverInfo                driver           = 6;
+  double                    shipment_amount  = 7;
+  double                    driver_revenue   = 8;
+  google.protobuf.Timestamp created_at       = 9;
+  google.protobuf.Timestamp updated_at       = 10;
+}
+
+message CreateShipmentRequest {
+  string     reference_number = 1;
+  string     origin           = 2;
+  string     destination      = 3;
+  DriverInfo driver           = 4;
+  double     shipment_amount  = 5;
+  double     driver_revenue   = 6;
+}
+
+message CreateShipmentResponse {
+  Shipment shipment = 1;
+}
+
+message GetShipmentRequest  {
+  string id = 1;
+}
+
+message GetShipmentResponse {
+  Shipment shipment = 1;
+}
+
+message AddStatusEventRequest {
+  string         id     = 1;
+  ShipmentStatus status = 2;
+  string         note   = 3;
+}
+
+message AddStatusEventResponse {
+  Shipment shipment = 1;
+}
+
+message GetShipmentHistoryRequest  {
+  string id = 1;
+}
+
+message GetShipmentHistoryResponse {
+  repeated StatusEvent events = 1;
+}
+
+service ShipmentService {
+  rpc CreateShipment     (CreateShipmentRequest)     returns (CreateShipmentResponse);
+  rpc GetShipment        (GetShipmentRequest)        returns (GetShipmentResponse);
+  rpc AddStatusEvent     (AddStatusEventRequest)     returns (AddStatusEventResponse);
+  rpc GetShipmentHistory (GetShipmentHistoryRequest) returns (GetShipmentHistoryResponse);
+}
