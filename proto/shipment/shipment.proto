@@ -20,9 +20,11 @@ message DriverInfo {
 }
 
 message StatusEvent {
-  ShipmentStatus            status      = 1;
-  string                    note        = 2;
-  google.protobuf.Timestamp occurred_at = 3;
+  string                    id          = 1;
+  string                    shipment_id  = 2;
+  ShipmentStatus            status      = 3;
+  string                    note        = 4;
+  google.protobuf.Timestamp occurred_at = 5;
 }
 
 message Shipment {
