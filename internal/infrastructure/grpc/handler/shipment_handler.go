@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -60,6 +61,10 @@ func (h *ShipmentHandler) CreateShipment(ctx context.Context, req *pb.CreateShip
 }
 
 func (h *ShipmentHandler) GetShipment(ctx context.Context, req *pb.GetShipmentRequest) (*pb.GetShipmentResponse, error) {
+	if _, err := uuid.Parse(req.Id); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid shipment ID format")
+	}
+
 	s, err := h.getShipment.Execute(ctx, req.Id)
 	if err != nil {
 		return nil, h.toGRPCError(err)
@@ -74,6 +79,10 @@ func (h *ShipmentHandler) AddStatusEvent(ctx context.Context, req *pb.AddStatusE
 		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
+	if _, err := uuid.Parse(req.Id); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid shipment ID format")
+	}
+
 	s, err := h.addStatusEvent.Execute(ctx, req.Id, domainStatus, req.Note)
 	if err != nil {
 		return nil, h.toGRPCError(err)
@@ -83,6 +92,10 @@ func (h *ShipmentHandler) AddStatusEvent(ctx context.Context, req *pb.AddStatusE
 }
 
 func (h *ShipmentHandler) GetShipmentHistory(ctx context.Context, req *pb.GetShipmentHistoryRequest) (*pb.GetShipmentHistoryResponse, error) {
+	if _, err := uuid.Parse(req.Id); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid shipment ID format")
+	}
+
 	events, err := h.getShipmentHistory.Execute(ctx, req.Id)
 	if err != nil {
 		return nil, h.toGRPCError(err)
