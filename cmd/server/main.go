@@ -13,6 +13,7 @@ import (
 	"shipment-service/internal/config"
 	"shipment-service/internal/infrastructure/grpc/handler"
 	"shipment-service/internal/infrastructure/grpc/server"
+	zaplogger "shipment-service/internal/infrastructure/logger"
 	"shipment-service/internal/infrastructure/postgres"
 	postgresrepo "shipment-service/internal/infrastructure/postgres/repository"
 	"shipment-service/internal/infrastructure/uuid"
@@ -24,7 +25,7 @@ func main() {
 		log.Fatalf("load config: %v", err)
 	}
 
-	logger, err := zap.NewProduction()
+	logger, err := zaplogger.New(zaplogger.Environment(cfg.AppEnv))
 	if err != nil {
 		log.Fatalf("init logger: %v", err)
 	}

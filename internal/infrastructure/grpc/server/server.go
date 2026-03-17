@@ -9,6 +9,7 @@ import (
 
 	pb "shipment-service/gen/proto/shipment"
 	"shipment-service/internal/infrastructure/grpc/handler"
+	"shipment-service/internal/infrastructure/grpc/interceptor"
 )
 
 type Server struct {
@@ -18,7 +19,12 @@ type Server struct {
 }
 
 func New(port string, h *handler.ShipmentHandler, log *zap.Logger) *Server {
-	srv := grpc.NewServer()
+	srv := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			interceptor.UnaryRecovery(log),
+			interceptor.UnaryLogger(log),
+		),
+	)
 	pb.RegisterShipmentServiceServer(srv, h)
 
 	return &Server{

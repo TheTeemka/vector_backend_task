@@ -9,7 +9,8 @@ import (
 )
 
 type Config struct {
-	GRPCPort string         `env:"GRPC_PORT" validate:"required"`
+	GRPCPort string         `env:"GRPC_PORT"  validate:"required"`
+	AppEnv   string         `env:"APP_ENV"    validate:"required,oneof=production development"`
 	Database DatabaseConfig
 }
 
