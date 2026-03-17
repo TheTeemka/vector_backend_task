@@ -11,6 +11,7 @@ import (
 	"shipment-service/internal/application/dto"
 	"shipment-service/internal/domain"
 	"shipment-service/internal/domain/shipment"
+	"shipment-service/internal/infrastructure/logger"
 )
 
 type ShipmentService struct {
@@ -37,6 +38,7 @@ func NewShipmentService(
 }
 
 func (s *ShipmentService) CreateShipment(ctx context.Context, input dto.CreateShipmentInput) (*shipment.Shipment, error) {
+	log := logger.WithCtxData(ctx, s.logger.Named("CreateShipment"))
 	if err := s.validate.Struct(input); err != nil {
 		return nil, err
 	}
@@ -68,14 +70,25 @@ func (s *ShipmentService) CreateShipment(ctx context.Context, input dto.CreateSh
 		return nil, err
 	}
 
+	log.Info("shipment created",
+		zap.String("id", sh.ID),
+		zap.String("reference_number", sh.ReferenceNumber),
+	)
 	return sh, nil
 }
 
 func (s *ShipmentService) GetShipment(ctx context.Context, id string) (*shipment.Shipment, error) {
-	return s.shipmentRepo.GetByID(ctx, id)
+	log := logger.WithCtxData(ctx, s.logger.Named("GetShipment"))
+	sh, err := s.shipmentRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	log.Debug("shipment fetched", zap.String("id", id))
+	return sh, nil
 }
 
 func (s *ShipmentService) AddStatusEvent(ctx context.Context, id string, status shipment.Status, note string) (*shipment.Shipment, error) {
+	log := logger.WithCtxData(ctx, s.logger.Named("AddStatusEvent"))
 	sh, err := s.shipmentRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -93,12 +106,22 @@ func (s *ShipmentService) AddStatusEvent(ctx context.Context, id string, status 
 		return nil, err
 	}
 
+	log.Info("status event added",
+		zap.String("id", id),
+		zap.String("status", string(status)),
+	)
 	return sh, nil
 }
 
 func (s *ShipmentService) GetShipmentHistory(ctx context.Context, id string) ([]shipment.StatusEvent, error) {
+	log := logger.WithCtxData(ctx, s.logger.Named("GetShipmentHistory"))
 	if _, err := s.shipmentRepo.GetByID(ctx, id); err != nil {
 		return nil, err
 	}
-	return s.eventRepo.GetAllByShipmentID(ctx, id)
+	events, err := s.eventRepo.GetAllByShipmentID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	log.Debug("shipment history fetched", zap.String("id", id), zap.Int("count", len(events)))
+	return events, nil
 }

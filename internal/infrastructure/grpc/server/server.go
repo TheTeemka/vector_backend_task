@@ -39,9 +39,11 @@ func (s *Server) Run() error {
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
+	s.logger.Info("grpc server started", zap.String("port", s.port))
 	return s.grpc.Serve(lis)
 }
 
 func (s *Server) GracefulStop() {
 	s.grpc.GracefulStop()
+	s.logger.Info("grpc server stopped")
 }

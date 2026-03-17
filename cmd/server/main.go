@@ -30,6 +30,7 @@ func main() {
 		log.Fatalf("init logger: %v", err)
 	}
 	defer logger.Sync()
+	logger.Info("starting server", zap.String("env", cfg.AppEnv), zap.String("port", cfg.GRPCPort))
 
 	db, err := postgres.NewDB(cfg.Database.DSN())
 	if err != nil {
@@ -57,13 +58,11 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		logger.Info("starting gRPC server", zap.String("port", cfg.GRPCPort))
 		if err := srv.Run(); err != nil {
 			logger.Fatal("grpc server error", zap.Error(err))
 		}
 	}()
 
 	<-quit
-	logger.Info("shutting down")
 	srv.GracefulStop()
 }
