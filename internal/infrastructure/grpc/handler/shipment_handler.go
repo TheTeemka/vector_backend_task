@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -21,6 +22,7 @@ type ShipmentHandler struct {
 	getShipment        *usecase.GetShipmentUseCase
 	addStatusEvent     *usecase.AddStatusEventUseCase
 	getShipmentHistory *usecase.GetShipmentHistoryUseCase
+	log                *zap.Logger
 }
 
 func NewShipmentHandler(
@@ -28,12 +30,14 @@ func NewShipmentHandler(
 	getShipment *usecase.GetShipmentUseCase,
 	addStatusEvent *usecase.AddStatusEventUseCase,
 	getShipmentHistory *usecase.GetShipmentHistoryUseCase,
+	log *zap.Logger,
 ) *ShipmentHandler {
 	return &ShipmentHandler{
 		createShipment:     createShipment,
 		getShipment:        getShipment,
 		addStatusEvent:     addStatusEvent,
 		getShipmentHistory: getShipmentHistory,
+		log:                log,
 	}
 }
 
@@ -49,7 +53,7 @@ func (h *ShipmentHandler) CreateShipment(ctx context.Context, req *pb.CreateShip
 
 	s, err := h.createShipment.Execute(ctx, input)
 	if err != nil {
-		return nil, toGRPCError(err)
+		return nil, h.toGRPCError(err)
 	}
 
 	return &pb.CreateShipmentResponse{Shipment: mapper.ShipmentToProto(s)}, nil
@@ -58,7 +62,7 @@ func (h *ShipmentHandler) CreateShipment(ctx context.Context, req *pb.CreateShip
 func (h *ShipmentHandler) GetShipment(ctx context.Context, req *pb.GetShipmentRequest) (*pb.GetShipmentResponse, error) {
 	s, err := h.getShipment.Execute(ctx, req.Id)
 	if err != nil {
-		return nil, toGRPCError(err)
+		return nil, h.toGRPCError(err)
 	}
 
 	return &pb.GetShipmentResponse{Shipment: mapper.ShipmentToProto(s)}, nil
@@ -72,7 +76,7 @@ func (h *ShipmentHandler) AddStatusEvent(ctx context.Context, req *pb.AddStatusE
 
 	s, err := h.addStatusEvent.Execute(ctx, req.Id, domainStatus, req.Note)
 	if err != nil {
-		return nil, toGRPCError(err)
+		return nil, h.toGRPCError(err)
 	}
 
 	return &pb.AddStatusEventResponse{Shipment: mapper.ShipmentToProto(s)}, nil
@@ -81,7 +85,7 @@ func (h *ShipmentHandler) AddStatusEvent(ctx context.Context, req *pb.AddStatusE
 func (h *ShipmentHandler) GetShipmentHistory(ctx context.Context, req *pb.GetShipmentHistoryRequest) (*pb.GetShipmentHistoryResponse, error) {
 	events, err := h.getShipmentHistory.Execute(ctx, req.Id)
 	if err != nil {
-		return nil, toGRPCError(err)
+		return nil, h.toGRPCError(err)
 	}
 
 	pbEvents := make([]*pb.StatusEvent, 0, len(events))
@@ -92,7 +96,7 @@ func (h *ShipmentHandler) GetShipmentHistory(ctx context.Context, req *pb.GetShi
 	return &pb.GetShipmentHistoryResponse{Events: pbEvents}, nil
 }
 
-func toGRPCError(err error) error {
+func (h *ShipmentHandler) toGRPCError(err error) error {
 	switch {
 	case errors.Is(err, domain.ErrShipmentNotFound):
 		return status.Errorf(codes.NotFound, "%v", err)
