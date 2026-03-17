@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"shipment-service/internal/domain/shipment"
+	"shipment-service/internal/infrastructure/postgres"
 )
 
 type StatusEventRepository struct {
@@ -20,7 +21,8 @@ func (r *StatusEventRepository) Create(ctx context.Context, e *shipment.StatusEv
 		INSERT INTO shipment_events (id, shipment_id, status, note, occurred_at)
 		VALUES ($1, $2, $3, $4, $5)`
 
-	_, err := r.db.ExecContext(ctx, query, e.ID, e.ShipmentID, string(e.Status), e.Note, e.OccurredAt)
+	exec := postgres.ExtractExecutor(ctx, r.db)
+	_, err := exec.ExecContext(ctx, query, e.ID, e.ShipmentID, string(e.Status), e.Note, e.OccurredAt)
 	return err
 }
 
@@ -31,7 +33,8 @@ func (r *StatusEventRepository) GetAllByShipmentID(ctx context.Context, shipment
 		WHERE shipment_id = $1
 		ORDER BY occurred_at ASC`
 
-	rows, err := r.db.QueryContext(ctx, query, shipmentID)
+	exec := postgres.ExtractExecutor(ctx, r.db)
+	rows, err := exec.QueryContext(ctx, query, shipmentID)
 	if err != nil {
 		return nil, err
 	}

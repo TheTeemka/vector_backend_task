@@ -41,8 +41,9 @@ func main() {
 	shipmentRepo := postgresrepo.NewShipmentRepository(db)
 	eventRepo := postgresrepo.NewStatusEventRepository(db)
 	idGen := uuid.NewGenerator()
+	txManager := postgres.NewTxManager(db)
 
-	shipmentSVC := service.NewShipmentService(shipmentRepo, eventRepo, idGen, logger)
+	shipmentSVC := service.NewShipmentService(shipmentRepo, eventRepo, idGen, txManager, logger)
 
 	h := handler.NewShipmentHandler(
 		usecase.NewCreateShipmentUseCase(shipmentSVC),

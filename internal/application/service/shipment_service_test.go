@@ -19,8 +19,14 @@ func newTestService(t *testing.T) (*ShipmentService, *mocks.ShipmentRepository, 
 	shipmentRepo := mocks.NewShipmentRepository(t)
 	eventRepo := mocks.NewStatusEventRepository(t)
 	idGen := mocks.NewIDGenerator(t)
+	txManager := mocks.NewTxManager(t)
+	txManager.EXPECT().
+		WithTx(mock.Anything, mock.AnythingOfType("func(context.Context) error")).
+		RunAndReturn(func(ctx context.Context, fn func(context.Context) error) error {
+			return fn(ctx)
+		}).Maybe()
 	logger := zap.NewNop()
-	svc := NewShipmentService(shipmentRepo, eventRepo, idGen, logger)
+	svc := NewShipmentService(shipmentRepo, eventRepo, idGen, txManager, logger)
 	return svc, shipmentRepo, eventRepo, idGen
 }
 

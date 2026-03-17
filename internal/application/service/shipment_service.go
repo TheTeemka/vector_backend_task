@@ -18,6 +18,7 @@ type ShipmentService struct {
 	shipmentRepo contract.ShipmentRepository
 	eventRepo    contract.StatusEventRepository
 	idGen        contract.IDGenerator
+	txManager    contract.TxManager
 	logger       *zap.Logger
 	validate     *validator.Validate
 }
@@ -26,12 +27,14 @@ func NewShipmentService(
 	shipmentRepo contract.ShipmentRepository,
 	eventRepo contract.StatusEventRepository,
 	idGen contract.IDGenerator,
+	txManager contract.TxManager,
 	logger *zap.Logger,
 ) *ShipmentService {
 	return &ShipmentService{
 		shipmentRepo: shipmentRepo,
 		eventRepo:    eventRepo,
 		idGen:        idGen,
+		txManager:    txManager,
 		logger:       logger,
 		validate:     validator.New(),
 	}
@@ -56,17 +59,19 @@ func (s *ShipmentService) CreateShipment(ctx context.Context, input dto.CreateSh
 		return nil, err
 	}
 
-	if err := s.shipmentRepo.Save(ctx, sh); err != nil {
-		return nil, err
-	}
-
 	initialEvent := &shipment.StatusEvent{
 		ID:         s.idGen.NewID(),
 		ShipmentID: sh.ID,
 		Status:     shipment.StatusPending,
 		Note:       "shipment created",
 	}
-	if err := s.eventRepo.Create(ctx, initialEvent); err != nil {
+
+	if err := s.txManager.WithTx(ctx, func(txCtx context.Context) error {
+		if err := s.shipmentRepo.Save(txCtx, sh); err != nil {
+			return err
+		}
+		return s.eventRepo.Create(txCtx, initialEvent)
+	}); err != nil {
 		return nil, err
 	}
 
@@ -99,10 +104,12 @@ func (s *ShipmentService) AddStatusEvent(ctx context.Context, id string, status 
 		return nil, err
 	}
 
-	if err := s.shipmentRepo.Save(ctx, sh); err != nil {
-		return nil, err
-	}
-	if err := s.eventRepo.Create(ctx, event); err != nil {
+	if err := s.txManager.WithTx(ctx, func(txCtx context.Context) error {
+		if err := s.shipmentRepo.Save(txCtx, sh); err != nil {
+			return err
+		}
+		return s.eventRepo.Create(txCtx, event)
+	}); err != nil {
 		return nil, err
 	}
 

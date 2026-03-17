@@ -7,6 +7,7 @@ import (
 
 	"shipment-service/internal/domain"
 	"shipment-service/internal/domain/shipment"
+	"shipment-service/internal/infrastructure/postgres"
 )
 
 type ShipmentRepository struct {
@@ -26,7 +27,8 @@ func (r *ShipmentRepository) Save(ctx context.Context, s *shipment.Shipment) err
 			current_status = EXCLUDED.current_status,
 			updated_at     = EXCLUDED.updated_at`
 
-	_, err := r.db.ExecContext(ctx, query,
+	exec := postgres.ExtractExecutor(ctx, r.db)
+	_, err := exec.ExecContext(ctx, query,
 		s.ID, s.ReferenceNumber, s.Origin, s.Destination, string(s.CurrentStatus),
 		s.Driver.DriverID, s.Driver.UnitID,
 		s.ShipmentAmount, s.DriverRevenue,
@@ -41,7 +43,8 @@ func (r *ShipmentRepository) GetByID(ctx context.Context, id string) (*shipment.
 		       driver_id, unit_id, shipment_amount, driver_revenue, created_at, updated_at
 		FROM shipments WHERE id = $1`
 
-	row := r.db.QueryRowContext(ctx, query, id)
+	exec := postgres.ExtractExecutor(ctx, r.db)
+	row := exec.QueryRowContext(ctx, query, id)
 	return scanShipment(row)
 }
 
@@ -51,7 +54,8 @@ func (r *ShipmentRepository) GetByReferenceNumber(ctx context.Context, ref strin
 		       driver_id, unit_id, shipment_amount, driver_revenue, created_at, updated_at
 		FROM shipments WHERE reference_number = $1`
 
-	row := r.db.QueryRowContext(ctx, query, ref)
+	exec := postgres.ExtractExecutor(ctx, r.db)
+	row := exec.QueryRowContext(ctx, query, ref)
 	return scanShipment(row)
 }
 
