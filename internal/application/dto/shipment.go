@@ -7,8 +7,8 @@ type CreateShipmentInput struct {
 	Origin          string              `validate:"required"`
 	Destination     string              `validate:"required"`
 	Driver          shipment.DriverInfo `validate:"required"`
-	ShipmentAmount  float64             `validate:"gte=0"`
-	DriverRevenue   float64             `validate:"gte=0"`
+	ShipmentAmount  float64
+	DriverRevenue   float64
 }
 
 func (i CreateShipmentInput) ToEntity(id string) (*shipment.Shipment, error) {

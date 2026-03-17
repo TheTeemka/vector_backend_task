@@ -120,6 +120,7 @@ func (h *ShipmentHandler) toGRPCError(err error) error {
 	case errors.Is(err, domain.ErrInvalidInput):
 		return status.Errorf(codes.InvalidArgument, "%v", err)
 	default:
+		h.log.Error("internal error", zap.Error(err))
 		return status.Errorf(codes.Internal, "internal server error")
 	}
 }

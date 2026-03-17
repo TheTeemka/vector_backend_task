@@ -40,15 +40,6 @@ func NewShipment(
 	if driver.DriverID == "" {
 		return nil, fmt.Errorf("%w: driver ID is required", domain.ErrInvalidInput)
 	}
-	if amount < 0 {
-		return nil, fmt.Errorf("%w: shipment amount must be non-negative", domain.ErrInvalidInput)
-	}
-	if revenue < 0 {
-		return nil, fmt.Errorf("%w: driver revenue must be non-negative", domain.ErrInvalidInput)
-	}
-	if revenue > amount {
-		return nil, fmt.Errorf("%w: driver revenue cannot exceed shipment amount", domain.ErrInvalidInput)
-	}
 
 	now := time.Now()
 	return &Shipment{
