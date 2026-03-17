@@ -1,5 +1,4 @@
 *.md
 *.pdf
 .env
-gen
 .DS_Store
