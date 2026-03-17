@@ -11,7 +11,7 @@ import (
 	"shipment-service/internal/application/dto"
 	"shipment-service/internal/domain"
 	"shipment-service/internal/domain/shipment"
-	"shipment-service/internal/infrastructure/logger"
+	"shipment-service/internal/pkg/ctxlog"
 )
 
 type ShipmentService struct {
@@ -41,7 +41,7 @@ func NewShipmentService(
 }
 
 func (s *ShipmentService) CreateShipment(ctx context.Context, input dto.CreateShipmentInput) (*shipment.Shipment, error) {
-	log := logger.WithCtxData(ctx, s.logger.Named("CreateShipment"))
+	log := ctxlog.WithCtxData(ctx, s.logger.Named("CreateShipment"))
 	if err := s.validate.Struct(input); err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (s *ShipmentService) CreateShipment(ctx context.Context, input dto.CreateSh
 }
 
 func (s *ShipmentService) GetShipment(ctx context.Context, id string) (*shipment.Shipment, error) {
-	log := logger.WithCtxData(ctx, s.logger.Named("GetShipment"))
+	log := ctxlog.WithCtxData(ctx, s.logger.Named("GetShipment"))
 	sh, err := s.shipmentRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (s *ShipmentService) GetShipment(ctx context.Context, id string) (*shipment
 }
 
 func (s *ShipmentService) AddStatusEvent(ctx context.Context, id string, status shipment.Status, note string) (*shipment.Shipment, error) {
-	log := logger.WithCtxData(ctx, s.logger.Named("AddStatusEvent"))
+	log := ctxlog.WithCtxData(ctx, s.logger.Named("AddStatusEvent"))
 	sh, err := s.shipmentRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (s *ShipmentService) AddStatusEvent(ctx context.Context, id string, status 
 }
 
 func (s *ShipmentService) GetShipmentHistory(ctx context.Context, id string) ([]shipment.StatusEvent, error) {
-	log := logger.WithCtxData(ctx, s.logger.Named("GetShipmentHistory"))
+	log := ctxlog.WithCtxData(ctx, s.logger.Named("GetShipmentHistory"))
 	if _, err := s.shipmentRepo.GetByID(ctx, id); err != nil {
 		return nil, err
 	}

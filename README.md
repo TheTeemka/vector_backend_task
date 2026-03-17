@@ -92,8 +92,10 @@ internal/
   infrastructure/           # Adapters (implements ports)
     grpc/                   # gRPC handler, mapper, interceptors, server
     postgres/               # PostgreSQL repository implementations
-    logger/                 # Zap logger with context enrichment
+    logger/                 # Zap logger factory (env-based configuration)
     uuid/                   # UUID generator
+  pkg/
+    ctxlog/                 # Context-aware log field propagation
   config/                   # Environment-based configuration
 init/
   proto/shipment/           # Protocol Buffers definition
