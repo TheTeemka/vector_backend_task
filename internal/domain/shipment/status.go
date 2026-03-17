@@ -4,6 +4,7 @@ type Status string
 
 const (
 	StatusPending   Status = "pending"
+	StatusPickedUp  Status = "picked_up"
 	StatusInTransit Status = "in_transit"
 	StatusDelivered Status = "delivered"
 	StatusCancelled Status = "cancelled"
@@ -12,7 +13,8 @@ const (
 // allowedTransitions defines the valid status state machine.
 // delivered and cancelled are terminal — no transitions out of them.
 var allowedTransitions = map[Status][]Status{
-	StatusPending:   {StatusInTransit, StatusCancelled},
+	StatusPending:   {StatusPickedUp, StatusCancelled},
+	StatusPickedUp:  {StatusInTransit, StatusCancelled},
 	StatusInTransit: {StatusDelivered, StatusCancelled},
 	StatusDelivered: {},
 	StatusCancelled: {},

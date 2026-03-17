@@ -12,8 +12,10 @@ func TestCanTransition_ValidTransitions(t *testing.T) {
 		from Status
 		to   Status
 	}{
-		{"pending to in_transit", StatusPending, StatusInTransit},
+		{"pending to picked_up", StatusPending, StatusPickedUp},
 		{"pending to cancelled", StatusPending, StatusCancelled},
+		{"picked_up to in_transit", StatusPickedUp, StatusInTransit},
+		{"picked_up to cancelled", StatusPickedUp, StatusCancelled},
 		{"in_transit to delivered", StatusInTransit, StatusDelivered},
 		{"in_transit to cancelled", StatusInTransit, StatusCancelled},
 	}
@@ -31,15 +33,22 @@ func TestCanTransition_InvalidTransitions(t *testing.T) {
 		from Status
 		to   Status
 	}{
+		{"pending to in_transit", StatusPending, StatusInTransit},
 		{"pending to delivered", StatusPending, StatusDelivered},
+		{"picked_up to pending", StatusPickedUp, StatusPending},
+		{"picked_up to delivered", StatusPickedUp, StatusDelivered},
 		{"in_transit to pending", StatusInTransit, StatusPending},
+		{"in_transit to picked_up", StatusInTransit, StatusPickedUp},
 		{"delivered to pending", StatusDelivered, StatusPending},
+		{"delivered to picked_up", StatusDelivered, StatusPickedUp},
 		{"delivered to in_transit", StatusDelivered, StatusInTransit},
 		{"delivered to cancelled", StatusDelivered, StatusCancelled},
 		{"cancelled to pending", StatusCancelled, StatusPending},
+		{"cancelled to picked_up", StatusCancelled, StatusPickedUp},
 		{"cancelled to in_transit", StatusCancelled, StatusInTransit},
 		{"cancelled to delivered", StatusCancelled, StatusDelivered},
 		{"same status pending", StatusPending, StatusPending},
+		{"same status picked_up", StatusPickedUp, StatusPickedUp},
 		{"same status in_transit", StatusInTransit, StatusInTransit},
 		{"same status delivered", StatusDelivered, StatusDelivered},
 		{"same status cancelled", StatusCancelled, StatusCancelled},

@@ -9,8 +9,9 @@ import "google/protobuf/timestamp.proto";
 enum ShipmentStatus {
   SHIPMENT_STATUS_UNSPECIFIED = 0;
   SHIPMENT_STATUS_PENDING     = 1;
-  SHIPMENT_STATUS_IN_TRANSIT  = 2;
-  SHIPMENT_STATUS_DELIVERED   = 3;
+  SHIPMENT_STATUS_PICKED_UP   = 2;
+  SHIPMENT_STATUS_IN_TRANSIT  = 3;
+  SHIPMENT_STATUS_DELIVERED   = 4;
   SHIPMENT_STATUS_CANCELLED   = 99;
 }
 
@@ -21,7 +22,7 @@ message DriverInfo {
 
 message StatusEvent {
   string                    id          = 1;
-  string                    shipment_id  = 2;
+  string                    shipment_id = 2;
   ShipmentStatus            status      = 3;
   string                    note        = 4;
   google.protobuf.Timestamp occurred_at = 5;

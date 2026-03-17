@@ -109,10 +109,10 @@ func TestAddStatusEvent_Success(t *testing.T) {
 	idGen.EXPECT().NewID().Return("event-1")
 	eventRepo.EXPECT().Create(ctx, mock.AnythingOfType("*shipment.StatusEvent")).Return(nil)
 
-	sh, err := svc.AddStatusEvent(ctx, "shipment-1", shipment.StatusInTransit, "picked up")
+	sh, err := svc.AddStatusEvent(ctx, "shipment-1", shipment.StatusPickedUp, "picked up")
 
 	require.NoError(t, err)
-	assert.Equal(t, shipment.StatusInTransit, sh.CurrentStatus)
+	assert.Equal(t, shipment.StatusPickedUp, sh.CurrentStatus)
 }
 
 func TestAddStatusEvent_InvalidTransition(t *testing.T) {

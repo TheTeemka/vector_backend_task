@@ -45,6 +45,8 @@ func StatusToProto(s shipment.Status) pb.ShipmentStatus {
 	switch s {
 	case shipment.StatusPending:
 		return pb.ShipmentStatus_SHIPMENT_STATUS_PENDING
+	case shipment.StatusPickedUp:
+		return pb.ShipmentStatus_SHIPMENT_STATUS_PICKED_UP
 	case shipment.StatusInTransit:
 		return pb.ShipmentStatus_SHIPMENT_STATUS_IN_TRANSIT
 	case shipment.StatusDelivered:
@@ -60,6 +62,8 @@ func ProtoToStatus(s pb.ShipmentStatus) (shipment.Status, error) {
 	switch s {
 	case pb.ShipmentStatus_SHIPMENT_STATUS_PENDING:
 		return shipment.StatusPending, nil
+	case pb.ShipmentStatus_SHIPMENT_STATUS_PICKED_UP:
+		return shipment.StatusPickedUp, nil
 	case pb.ShipmentStatus_SHIPMENT_STATUS_IN_TRANSIT:
 		return shipment.StatusInTransit, nil
 	case pb.ShipmentStatus_SHIPMENT_STATUS_DELIVERED:
