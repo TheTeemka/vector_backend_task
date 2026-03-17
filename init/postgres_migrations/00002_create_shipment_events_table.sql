@@ -1,8 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS shipment_events (
-    id UUID PRIMARY KEY,
-    shipment_id UUID NOT NULL REFERENCES shipments(id),
+    id VARCHAR(50) PRIMARY KEY,
+    shipment_id VARCHAR(50) NOT NULL REFERENCES shipments(id),
     status VARCHAR(20) NOT NULL,
     note VARCHAR(500),
     occurred_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

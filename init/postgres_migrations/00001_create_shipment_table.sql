@@ -1,13 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS shipments (
-    id UUID PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY,
     reference_number VARCHAR(50) UNIQUE NOT NULL,
     origin VARCHAR(255) NOT NULL,
     destination VARCHAR(255) NOT NULL,
     current_status VARCHAR(20) NOT NULL,
-    driver_id UUID NOT NULL,
-    unit_id UUID NOT NULL,
+    driver_id VARCHAR(50) NOT NULL,
+    unit_id VARCHAR(50) NOT NULL,
     shipment_amount DECIMAL(10,2) NOT NULL,
     driver_revenue DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
