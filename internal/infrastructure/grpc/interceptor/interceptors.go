@@ -24,6 +24,7 @@ func UnaryLogger(log *zap.Logger) grpc.UnaryServerInterceptor {
 		zaplogger.WithCtxData(ctx, log).Info("grpc call",
 			zap.String("method", info.FullMethod),
 			zap.Duration("duration", time.Since(start)),
+			zap.String("request_id", reqID),
 			zap.Error(err),
 		)
 		return resp, err
