@@ -37,7 +37,7 @@ func TestCreateShipment_Success(t *testing.T) {
 	idGen.EXPECT().NewID().Return("shipment-1").Once()
 	idGen.EXPECT().NewID().Return("event-1").Once()
 	shipmentRepo.EXPECT().GetByReferenceNumber(ctx, "REF-001").Return(nil, domain.ErrShipmentNotFound)
-	shipmentRepo.EXPECT().Save(ctx, mock.AnythingOfType("*shipment.Shipment")).Return(nil)
+	shipmentRepo.EXPECT().Create(ctx, mock.AnythingOfType("*shipment.Shipment")).Return(nil)
 	eventRepo.EXPECT().Create(ctx, mock.AnythingOfType("*shipment.StatusEvent")).Return(nil)
 
 	input := dto.CreateShipmentInput{
@@ -111,7 +111,7 @@ func TestAddStatusEvent_Success(t *testing.T) {
 		CurrentStatus: shipment.StatusPending,
 	}
 	shipmentRepo.EXPECT().GetByID(ctx, "shipment-1").Return(existing, nil)
-	shipmentRepo.EXPECT().Save(ctx, mock.AnythingOfType("*shipment.Shipment")).Return(nil)
+	shipmentRepo.EXPECT().Create(ctx, mock.AnythingOfType("*shipment.Shipment")).Return(nil)
 	idGen.EXPECT().NewID().Return("event-1")
 	eventRepo.EXPECT().Create(ctx, mock.AnythingOfType("*shipment.StatusEvent")).Return(nil)
 

@@ -60,7 +60,7 @@ func (s *ShipmentService) CreateShipment(ctx context.Context, input dto.CreateSh
 	}
 
 	if err := s.txManager.WithTx(ctx, func(txCtx context.Context) error {
-		if err := s.shipmentRepo.Save(txCtx, sh); err != nil {
+		if err := s.shipmentRepo.Create(txCtx, sh); err != nil {
 			return err
 		}
 		return s.eventRepo.Create(txCtx, initialEvent)
@@ -98,7 +98,7 @@ func (s *ShipmentService) AddStatusEvent(ctx context.Context, id string, status 
 	}
 
 	if err := s.txManager.WithTx(ctx, func(txCtx context.Context) error {
-		if err := s.shipmentRepo.Save(txCtx, sh); err != nil {
+		if err := s.shipmentRepo.Create(txCtx, sh); err != nil {
 			return err
 		}
 		return s.eventRepo.Create(txCtx, event)

@@ -23,6 +23,53 @@ func (_m *ShipmentRepository) EXPECT() *ShipmentRepository_Expecter {
 	return &ShipmentRepository_Expecter{mock: &_m.Mock}
 }
 
+// Create provides a mock function with given fields: ctx, s
+func (_m *ShipmentRepository) Create(ctx context.Context, s *shipment.Shipment) error {
+	ret := _m.Called(ctx, s)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *shipment.Shipment) error); ok {
+		r0 = rf(ctx, s)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ShipmentRepository_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
+type ShipmentRepository_Create_Call struct {
+	*mock.Call
+}
+
+// Create is a helper method to define mock.On call
+//   - ctx context.Context
+//   - s *shipment.Shipment
+func (_e *ShipmentRepository_Expecter) Create(ctx interface{}, s interface{}) *ShipmentRepository_Create_Call {
+	return &ShipmentRepository_Create_Call{Call: _e.mock.On("Create", ctx, s)}
+}
+
+func (_c *ShipmentRepository_Create_Call) Run(run func(ctx context.Context, s *shipment.Shipment)) *ShipmentRepository_Create_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(*shipment.Shipment))
+	})
+	return _c
+}
+
+func (_c *ShipmentRepository_Create_Call) Return(_a0 error) *ShipmentRepository_Create_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *ShipmentRepository_Create_Call) RunAndReturn(run func(context.Context, *shipment.Shipment) error) *ShipmentRepository_Create_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetByID provides a mock function with given fields: ctx, id
 func (_m *ShipmentRepository) GetByID(ctx context.Context, id string) (*shipment.Shipment, error) {
 	ret := _m.Called(ctx, id)
@@ -137,53 +184,6 @@ func (_c *ShipmentRepository_GetByReferenceNumber_Call) Return(_a0 *shipment.Shi
 }
 
 func (_c *ShipmentRepository_GetByReferenceNumber_Call) RunAndReturn(run func(context.Context, string) (*shipment.Shipment, error)) *ShipmentRepository_GetByReferenceNumber_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// Save provides a mock function with given fields: ctx, s
-func (_m *ShipmentRepository) Save(ctx context.Context, s *shipment.Shipment) error {
-	ret := _m.Called(ctx, s)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Save")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *shipment.Shipment) error); ok {
-		r0 = rf(ctx, s)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// ShipmentRepository_Save_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Save'
-type ShipmentRepository_Save_Call struct {
-	*mock.Call
-}
-
-// Save is a helper method to define mock.On call
-//   - ctx context.Context
-//   - s *shipment.Shipment
-func (_e *ShipmentRepository_Expecter) Save(ctx interface{}, s interface{}) *ShipmentRepository_Save_Call {
-	return &ShipmentRepository_Save_Call{Call: _e.mock.On("Save", ctx, s)}
-}
-
-func (_c *ShipmentRepository_Save_Call) Run(run func(ctx context.Context, s *shipment.Shipment)) *ShipmentRepository_Save_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*shipment.Shipment))
-	})
-	return _c
-}
-
-func (_c *ShipmentRepository_Save_Call) Return(_a0 error) *ShipmentRepository_Save_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *ShipmentRepository_Save_Call) RunAndReturn(run func(context.Context, *shipment.Shipment) error) *ShipmentRepository_Save_Call {
 	_c.Call.Return(run)
 	return _c
 }

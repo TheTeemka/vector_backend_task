@@ -18,7 +18,7 @@ func NewShipmentRepository(db *sql.DB) *ShipmentRepository {
 	return &ShipmentRepository{db: db}
 }
 
-func (r *ShipmentRepository) Save(ctx context.Context, s *shipment.Shipment) error {
+func (r *ShipmentRepository) Create(ctx context.Context, s *shipment.Shipment) error {
 	query := `
 		INSERT INTO shipments (id, reference_number, origin, destination, current_status,
 		                       driver_id, unit_id, shipment_amount, driver_revenue, created_at, updated_at)
