@@ -35,3 +35,8 @@ func CanTransition(from, to Status) bool {
 	}
 	return false
 }
+
+func IsValidStatus(s Status) bool {
+	_, ok := allowedTransitions[s]
+	return ok
+}

@@ -11,7 +11,7 @@ type CreateShipmentInput struct {
 	DriverRevenue   float64
 }
 
-func (i CreateShipmentInput) ToEntity(id string) (*shipment.Shipment, error) {
+func (i CreateShipmentInput) ToEntity(id string, eventID string) (*shipment.Shipment, *shipment.StatusEvent, error) {
 	return shipment.NewShipment(
 		id,
 		i.ReferenceNumber,
@@ -20,5 +20,6 @@ func (i CreateShipmentInput) ToEntity(id string) (*shipment.Shipment, error) {
 		i.Driver,
 		i.ShipmentAmount,
 		i.DriverRevenue,
+		eventID,
 	)
 }

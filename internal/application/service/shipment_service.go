@@ -54,16 +54,9 @@ func (s *ShipmentService) CreateShipment(ctx context.Context, input dto.CreateSh
 		return nil, domain.ErrDuplicateReference
 	}
 
-	sh, err := input.ToEntity(s.idGen.NewID())
+	sh, initialEvent, err := input.ToEntity(s.idGen.NewID(), s.idGen.NewID())
 	if err != nil {
 		return nil, err
-	}
-
-	initialEvent := &shipment.StatusEvent{
-		ID:         s.idGen.NewID(),
-		ShipmentID: sh.ID,
-		Status:     shipment.StatusPending,
-		Note:       "shipment created",
 	}
 
 	if err := s.txManager.WithTx(ctx, func(txCtx context.Context) error {
